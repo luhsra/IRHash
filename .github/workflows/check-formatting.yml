@@ -1,0 +1,21 @@
+name: Check formatting
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check formatting
+        uses: DoozyX/clang-format-lint-action@v0.20
+        with:
+          source: "./pass ./example"
+          extensions: "hpp,cpp,c,h"
+          clangFormatVersion: 20

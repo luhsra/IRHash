@@ -1,0 +1,39 @@
+name: Build
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    container: ubuntu:24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: |
+          apt update
+          DEBIAN_FRONTEND=noninteractive apt -y --no-install-recommends install \
+             make clang-18 libclang-18-dev llvm-18-dev libxxhash-dev
+
+      - name: Build
+        working-directory: pass
+        run: |
+          make LLVM-CONFIG=llvm-config-18 \
+              pass-skip.so \
+              pass-debug.so \
+              pass-no-plugin-skip.so \
+              pass-no-plugin-debug.so
+
+      - name: Example
+        working-directory: example
+        run: |
+          export IRHASH_CACHE=/tmp/irhash
+          mkdir "$IRHASH_CACHE"
+          make PASS=../pass/pass-debug.so
+          touch edit-distance.cpp
+          make PASS=../pass/pass-debug.so

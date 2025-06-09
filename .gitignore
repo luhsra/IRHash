@@ -1,0 +1,7 @@
+*.o
+*.so
+.cache/
+/.vscode
+/example/edit-distance
+/example/quicksort
+compile_commands.json
